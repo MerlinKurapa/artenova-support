@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Form</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg, #020617, #0f172a);
+  color: white;
+  text-align: center;
+}
+
+/* BAŞLIK */
+h2 {
+  margin-top: 50px;
+}
+
+/* INPUT */
+input, textarea {
+  width: 320px;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  transition: 0.3s;
+}
+
+/* FOCUS EFEKT */
+input:focus, textarea:focus {
+  box-shadow: 0 0 10px #3b82f6;
+}
+
+/* HATA DURUMU */
+.error {
+  border: 2px solid #ef4444;
+  animation: shake 0.3s;
+}
+
+/* BUTTON */
+button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #22c55e;
+}
+
+/* UYARI KART */
+.warning {
+  margin-top: 20px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  padding: 15px;
+  border-radius: 12px;
+  width: 330px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 13px;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+
+/* BAŞARI MESAJI */
+.success {
+  margin-top: 20px;
+  color: #4ade80;
+  display: none;
+}
+
+/* SHAKE ANİMASYON */
+@keyframes shake {
+  0% { transform: translateX(0);}
+  25% { transform: translateX(-5px);}
+  50% { transform: translateX(5px);}
+  75% { transform: translateX(-5px);}
+  100% { transform: translateX(0);}
+}
+</style>
+
+</head>
+
+<body>
+
+<h2 id="title"></h2>
+
+<input id="username" placeholder="Arte Kullanıcı Adın"><br>
+<input id="instagram" placeholder="Instagram Kullanıcı Adın"><br>
+<textarea id="message" placeholder="Mesajın"></textarea><br>
+
+<button onclick="send()">Gönder</button>
+
+<!-- 🔥 UYARI -->
+<div class="warning">
+⚠️ Uyarı: Instagram Kullanıcı Adı ve Arte Kullanıcı Adınızı doğru girmediğiniz taktirde geri dönüş alamazsınız!
+</div>
+
+<!-- ✅ BAŞARI -->
+<div class="success" id="successMsg">
+✅ Ticket başarıyla gönderildi!
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBEgE2zQ9zz0Ie_yN39P2uJl8wrZZmymdU",
+  authDomain: "ticker-489ad.firebaseapp.com",
+  projectId: "ticker-489ad",
+  storageBucket: "ticker-489ad.firebasestorage.app",
+  messagingSenderId: "649615430475",
+  appId: "1:649615430475:web:0fc027484950c1090b8ece",
+  measurementId: "G-M82RWCCG71"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const urlParams = new URLSearchParams(window.location.search);
+const type = urlParams.get("type");
+
+document.getElementById("title").innerText =
+  type === "ticket" ? "🎫 Ticket Oluştur" :
+  type === "support" ? "🛠️ Destek Talebi" :
+  "💡 Öneri Gönder";
+
+window.send = async () => {
+
+  const username = document.getElementById("username");
+  const instagram = document.getElementById("instagram");
+  const message = document.getElementById("message");
+
+  // reset hata
+  username.classList.remove("error");
+  instagram.classList.remove("error");
+  message.classList.remove("error");
+
+  // VALIDATION
+  if (!username.value || !instagram.value || !message.value) {
+
+    if (!username.value) username.classList.add("error");
+    if (!instagram.value) instagram.classList.add("error");
+    if (!message.value) message.classList.add("error");
+
+    return;
+  }
+
+  await addDoc(collection(db, "tickets"), {
+    username: username.value,
+    instagram: instagram.value,
+    message: message.value,
+    type: type,
+    status: "open",
+    created: new Date()
+  });
+
+  // BAŞARI MESAJI
+  document.getElementById("successMsg").style.display = "block";
+
+  // INPUT TEMİZLE
+  username.value = "";
+  instagram.value = "";
+  message.value = "";
+}
+</script>
+
+</body>
+</html>
