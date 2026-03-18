@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Form</title>
 
-<!-- 🔥 FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
@@ -36,14 +35,12 @@ body {
   top: 20px;
 }
 
-/* BAŞLIK */
 h2 {
   margin-top: 80px;
   font-size: 28px;
   font-weight: 600;
 }
 
-/* INPUT MODERN */
 input, textarea {
   width: 340px;
   padding: 14px;
@@ -53,93 +50,33 @@ input, textarea {
   outline: none;
   background: rgba(15, 23, 42, 0.6);
   color: white;
-  backdrop-filter: blur(10px);
-  transition: 0.3s;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.4);
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
 }
 
-/* HOVER */
-input:hover, textarea:hover {
-  border: 1px solid rgba(59,130,246,0.6);
-}
-
-/* FOCUS */
-input:focus, textarea:focus {
-  border: 1px solid #3b82f6;
-  box-shadow: 0 0 15px rgba(59,130,246,0.6);
-  transform: scale(1.02);
-}
-
-/* PLACEHOLDER */
-input::placeholder, textarea::placeholder {
-  color: #64748b;
-  font-weight: 300;
-}
-
-/* TEXTAREA */
 textarea {
   min-height: 160px;
-  resize: none;
 }
 
-/* ERROR */
 .error {
   border: 1px solid #ef4444 !important;
-  box-shadow: 0 0 12px rgba(239,68,68,0.6);
-  animation: shake 0.3s;
 }
 
-/* BUTTON */
 button {
   padding: 12px 30px;
-  border: none;
   border-radius: 12px;
   background: #22c55e;
   color: white;
   cursor: pointer;
-  transition: 0.3s;
-  font-size: 15px;
-  font-family: 'Poppins', sans-serif;
-  font-weight: 500;
 }
 
-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px #22c55e;
-}
-
-/* ALT UYARI */
 .warning {
   margin-top: 20px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.5);
   color: #f87171;
-  padding: 15px;
-  border-radius: 14px;
-  width: 340px;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: 13px;
-  font-weight: 400;
 }
 
-/* SUCCESS */
 .success {
   margin-top: 20px;
   color: #4ade80;
   display: none;
-  font-weight: 500;
-}
-
-/* SHAKE */
-@keyframes shake {
-  0% { transform: translateX(0);}
-  25% { transform: translateX(-5px);}
-  50% { transform: translateX(5px);}
-  75% { transform: translateX(-5px);}
-  100% { transform: translateX(0);}
 }
 </style>
 
@@ -147,9 +84,7 @@ button:hover {
 
 <body>
 
-<div id="topAlert" class="top-alert">
-⚠️ Lütfen tüm alanları doldurun!
-</div>
+<div id="topAlert" class="top-alert"></div>
 
 <h2 id="title"></h2>
 
@@ -160,29 +95,38 @@ button:hover {
 <button onclick="send()">Gönder</button>
 
 <div class="warning">
-⚠️ Instagram ve Arte kullanıcı adınızı doğru girmezseniz geri dönüş alamazsınız!
+⚠️ Bilgileri doğru girmezsen geri dönüş alamazsın!
 </div>
 
 <div class="success" id="successMsg">
-✅ Ticket başarıyla gönderildi!
+✅ Gönderildi!
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getFirestore, addDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEgE2zQ9zz0Ie_yN39P2uJl8wrZZmymdU",
   authDomain: "ticker-489ad.firebaseapp.com",
   projectId: "ticker-489ad",
-  storageBucket: "ticker-489ad.firebasestorage.app",
-  messagingSenderId: "649615430475",
-  appId: "1:649615430475:web:0fc027484950c1090b8ece",
-  measurementId: "G-M82RWCCG71"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+
+// 🔒 GİRİŞ KONTROL
+onAuthStateChanged(auth, (user)=>{
+  if(!user){
+    location.href="login.html";
+  } else {
+    currentUser = user;
+  }
+});
 
 const urlParams = new URLSearchParams(window.location.search);
 const type = urlParams.get("type");
@@ -218,7 +162,7 @@ window.send = async () => {
     if (!instagram.value) instagram.classList.add("error");
     if (!message.value) message.classList.add("error");
 
-    showAlert("⚠️ Tüm alanları doldurmak zorunludur!");
+    showAlert("⚠️ Tüm alanları doldur!");
     return;
   }
 
@@ -226,6 +170,7 @@ window.send = async () => {
     username: username.value,
     instagram: instagram.value,
     message: message.value,
+    userEmail: currentUser.email, // 🔥 EN ÖNEMLİ KISIM
     type: type,
     status: "open",
     created: new Date()
@@ -233,11 +178,11 @@ window.send = async () => {
 
   document.getElementById("successMsg").style.display = "block";
 
-  username.value = "";
-  instagram.value = "";
-  message.value = "";
+  showAlert("✅ Gönderildi!");
 
-  showAlert("✅ Başarıyla gönderildi!");
+  setTimeout(()=>{
+    location.href="panel.html"; // 🔥 panel yönlendirme
+  },1500);
 }
 </script>
 
