@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <title>ArteNova Destek Merkezi</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #0f172a, #020617);
   color: white;
   text-align: center;
@@ -26,15 +28,19 @@ body {
   font-size: 38px;
 }
 
-/* LOGO */
 .logo {
   width: 45px;
   height: 45px;
   border-radius: 12px;
-  box-shadow: 0 0 15px rgba(59,130,246,0.6);
+  box-shadow: 0 0 20px rgba(59,130,246,0.7);
 }
 
-/* SAĞ ÜST */
+.subtitle {
+  color: #94a3b8;
+  margin-top: 10px;
+}
+
+/* TOP BAR */
 .top-bar {
   position: absolute;
   top: 20px;
@@ -49,59 +55,86 @@ body {
   cursor:pointer;
 }
 
-.logout {
-  background:#ef4444;
-  color:white;
-}
+.panel { background:#3b82f6; color:white; }
+.logout { background:#ef4444; color:white; }
 
-.panel {
-  background:#3b82f6;
-  color:white;
-}
-
-.subtitle {
-  color: #94a3b8;
-  margin-top: 10px;
-}
-
-/* ANA ALAN */
+/* MAIN */
 .main {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   padding: 40px 60px;
   flex: 1;
 }
 
-/* ORTA KARTLAR */
-.container {
-  text-align: center;
+/* SIDE CARDS */
+.info-card {
+  width: 340px;
+  min-height: 320px;
+  padding: 30px;
+  border-radius: 20px;
+  background: rgba(30, 41, 59, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(59,130,246,0.3);
+  box-shadow: 0 0 20px rgba(59,130,246,0.2);
+  text-align: left;
+  transition: 0.3s;
 }
 
+.info-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 35px rgba(59,130,246,0.7);
+}
+
+/* CENTER */
+.container {
+  display: flex;
+  gap: 20px;
+}
+
+/* CARD */
 .card {
-  display: inline-block;
   background: #1e293b;
   padding: 35px;
-  margin: 15px;
-  border-radius: 15px;
+  border-radius: 20px;
   cursor: pointer;
+  width: 220px;
+  height: 180px;
   transition: 0.3s;
-  width: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* GLOW EFFECT */
+.card::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(59,130,246,0.4) 0%, transparent 60%);
+  top: -50%;
+  left: -50%;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .card:hover {
   transform: scale(1.08);
   background: #334155;
+  box-shadow: 0 0 30px rgba(59,130,246,0.8);
 }
 
-/* YAN KART */
-.info-card {
-  width: 300px;
-  padding: 25px;
-  border-radius: 20px;
-  background: rgba(30, 41, 59, 0.5);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(59,130,246,0.3);
+.card h2 {
+  margin-top: 10px;
+}
+
+.card p {
+  color: #94a3b8;
+  font-size: 14px;
 }
 
 /* FOOTER */
@@ -113,12 +146,10 @@ body {
   border-top: 1px solid rgba(255,255,255,0.1);
 }
 </style>
-
 </head>
 
 <body>
 
-<!-- 🔥 TOP BAR -->
 <div class="top-bar">
   <button class="top-btn panel" onclick="goPanel()">Panel</button>
   <button class="top-btn logout" onclick="logout()">Çıkış</button>
@@ -144,12 +175,10 @@ body {
     </p>
     <p>
       Arte yazılımında yaşadığınız açılmama, hata, engel, Defender veya AntiVirüs
-      problemlerini buradan Ticket oluşturarak iletebilirsiniz.
+      problemlerini buradan Ticket oluşturabilirsiniz.
     </p>
     <p>
-      Instagram tarafında oluşan yoğunluk nedeniyle kullanıcılar duyuruları
-      okumadan DM üzerinden iletişime geçmektedir. Bu durum süreci zorlaştırdığı
-      için sistemli destek modeline geçilmiştir.
+      Instagram yoğunluğu nedeniyle sistemli modele geçildi.
     </p>
   </div>
 
@@ -171,7 +200,7 @@ body {
     <div class="card" onclick="openForm('suggestion')">
       💡
       <h2>Öneri</h2>
-      <p>Fikirlerini bizimle paylaş</p>
+      <p>Fikirlerini paylaş</p>
     </div>
 
   </div>
@@ -180,17 +209,13 @@ body {
   <div class="info-card">
     <h3>🎮 ARTE NEDİR?</h3>
     <p>
-      Arte, oyun deneyimlerini en üst düzeye taşıyan ve oyunların sunduğu
-      kısıtlamaları ortadan kaldıran bir yazılım aracıdır.
+      Arte, oyun deneyimini üst seviyeye çıkaran yazılımdır.
     </p>
     <p>
-      Sizlere daha konforlu ve sınırsız bir oyun deneyimi sunmak için
-      sürekli geliştirme yapıyoruz. Hata ve önerilerinizi bizlere iletmeniz
-      bizim için önemlidir.
+      Sürekli geliştirme yapıyoruz. Geri bildirimler önemli.
     </p>
     <p>
-      Dipnot: Kurulum yardımcısı yakında eklenecektir. Şimdilik ArteNova
-      müşterileri destek kısmından yardım talep edebilir.
+      Kurulum yardımı yakında eklenecek.
     </p>
   </div>
 
@@ -213,25 +238,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// 🔒 LOGIN YOKSA AT
 onAuthStateChanged(auth,(user)=>{
   if(!user){
     location.href="login.html";
   }
 });
 
-// 🚪 LOGOUT
 window.logout = ()=>{
   signOut(auth);
   location.href="login.html";
 }
 
-// 📬 PANEL
 window.goPanel = ()=>{
   location.href="panel.html";
 }
 
-// 📩 FORM
 window.openForm = (type)=>{
   location.href="form.html?type="+type;
 }
