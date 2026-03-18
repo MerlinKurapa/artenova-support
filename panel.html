@@ -1,70 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
 <title>Panel</title>
+
+<style>
+body{
+  font-family:Poppins;
+  background:#020617;
+  color:white;
+  padding:20px;
+}
+
+.ticket{
+  background:#1e293b;
+  padding:15px;
+  margin:10px auto;
+  border-radius:15px;
+  width:400px;
+}
+</style>
 </head>
 
 <body>
 
-<h2>Ticket Paneli</h2>
+<h2>📬 Ticketlerim</h2>
 
-<textarea id="message"></textarea><br>
-<button onclick="send()">Gönder</button>
-
-<h3>Ticketların</h3>
-<div id="list"></div>
+<div id="tickets"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, addDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBEgE2zQ9zz0Ie_yN39P2uJl8wrZZmymdU",
+  apiKey: "AIzaSy...",
   authDomain: "ticker-489ad.firebaseapp.com",
   projectId: "ticker-489ad",
-  storageBucket: "ticker-489ad.firebasestorage.app",
-  messagingSenderId: "649615430475",
-  appId: "1:649615430475:web:0fc027484950c1090b8ece",
-  measurementId: "G-M82RWCCG71"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let currentUser;
+onAuthStateChanged(auth, async (user)=>{
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) return location.href="login.html";
-  currentUser = user;
+  if(!user){
+    location.href="login.html";
+    return;
+  }
 
-  const q = query(collection(db,"tickets"), where("userId","==",user.uid));
-  const snap = await getDocs(q);
+  const snap = await getDocs(collection(db,"tickets"));
 
-  snap.forEach(doc=>{
-    document.getElementById("list").innerHTML += `
-      <div>
-        ${doc.data().message}
-        <br> Cevap: ${doc.data().reply || "Yok"}
-      </div><hr>
-    `;
+  snap.forEach(d=>{
+    const data = d.data();
+
+    // SADECE KENDİ TICKETI
+    if(data.userEmail === user.email){
+
+      document.getElementById("tickets").innerHTML += `
+        <div class="ticket">
+          <p><b>Mesaj:</b> ${data.message}</p>
+          <p><b>Durum:</b> ${data.status}</p>
+          <p><b>Cevap:</b> ${data.reply || "Henüz yok"}</p>
+        </div>
+      `;
+    }
   });
+
 });
-
-window.send = async () => {
-  const msg = document.getElementById("message").value;
-
-  await addDoc(collection(db,"tickets"),{
-    userId: currentUser.uid,
-    message: msg,
-    reply:"",
-    status:"open"
-  });
-
-  alert("Gönderildi");
-}
 </script>
 
 </body>
