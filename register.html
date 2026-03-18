@@ -1,8 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Kayıt</title>
+<title>Kayıt Ol</title>
+
+<style>
+body {
+  font-family: Poppins, sans-serif;
+  background:#020617;
+  color:white;
+  text-align:center;
+  margin-top:100px;
+}
+
+input {
+  padding:10px;
+  margin:10px;
+  border-radius:10px;
+  border:none;
+  width:250px;
+}
+
+button {
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+}
+</style>
 </head>
 
 <body>
@@ -12,7 +39,7 @@
 <input id="email" placeholder="Email"><br>
 <input id="password" type="password" placeholder="Şifre"><br>
 
-<button onclick="register()">Kayıt</button>
+<button onclick="register()">Kayıt Ol</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
@@ -32,12 +59,23 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 window.register = async () => {
+
   const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+  const password = document.getElementById("password").value;
 
-  await createUserWithEmailAndPassword(auth, email, pass);
+  if(!email || !password){
+    alert("Alanlar boş olamaz!");
+    return;
+  }
 
-  alert("Kayıt başarılı!");
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert("Kayıt başarılı!");
+    window.location.href = "login.html";
+  } catch(e){
+    alert(e.message);
+  }
+
 }
 </script>
 
