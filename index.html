@@ -94,18 +94,23 @@ body {
   background: #334155;
 }
 
+/* YAN KART */
 .info-card {
   width: 300px;
   padding: 25px;
   border-radius: 20px;
   background: rgba(30, 41, 59, 0.5);
   backdrop-filter: blur(12px);
+  border: 1px solid rgba(59,130,246,0.3);
 }
 
+/* FOOTER */
 .footer {
   margin-top: auto;
   padding: 20px;
   color: #64748b;
+  font-size: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 </style>
 
@@ -130,39 +135,69 @@ body {
 
 <div class="main">
 
+  <!-- SOL -->
   <div class="info-card">
     <h3>📢 Sistem Hakkında</h3>
-    <p>Yoğunluk nedeniyle bu sisteme geçildi.</p>
+    <p>
+      Uzun süredir süren çalışmalarımız sonucu yoğunluk ve mesaj trafiği sebebiyle
+      bu sistemli yapıya geçiş sağladık.
+    </p>
+    <p>
+      Arte yazılımında yaşadığınız açılmama, hata, engel, Defender veya AntiVirüs
+      problemlerini buradan Ticket oluşturarak iletebilirsiniz.
+    </p>
+    <p>
+      Instagram tarafında oluşan yoğunluk nedeniyle kullanıcılar duyuruları
+      okumadan DM üzerinden iletişime geçmektedir. Bu durum süreci zorlaştırdığı
+      için sistemli destek modeline geçilmiştir.
+    </p>
   </div>
 
+  <!-- ORTA -->
   <div class="container">
 
     <div class="card" onclick="openForm('ticket')">
       🎫
       <h2>Ticket</h2>
+      <p>Sistem hatalarını bildir</p>
     </div>
 
     <div class="card" onclick="openForm('support')">
       🛠️
       <h2>Destek</h2>
+      <p>Kurulum ve kullanım yardımı</p>
     </div>
 
     <div class="card" onclick="openForm('suggestion')">
       💡
       <h2>Öneri</h2>
+      <p>Fikirlerini bizimle paylaş</p>
     </div>
 
   </div>
 
+  <!-- SAĞ -->
   <div class="info-card">
     <h3>🎮 ARTE NEDİR?</h3>
-    <p>Oyun deneyimini geliştiren yazılım.</p>
+    <p>
+      Arte, oyun deneyimlerini en üst düzeye taşıyan ve oyunların sunduğu
+      kısıtlamaları ortadan kaldıran bir yazılım aracıdır.
+    </p>
+    <p>
+      Sizlere daha konforlu ve sınırsız bir oyun deneyimi sunmak için
+      sürekli geliştirme yapıyoruz. Hata ve önerilerinizi bizlere iletmeniz
+      bizim için önemlidir.
+    </p>
+    <p>
+      Dipnot: Kurulum yardımcısı yakında eklenecektir. Şimdilik ArteNova
+      müşterileri destek kısmından yardım talep edebilir.
+    </p>
   </div>
 
 </div>
 
 <div class="footer">
-  © 2026 ArteNova
+  © 2026 ArteNova Destek Sistemi • Tüm hakları saklıdır
 </div>
 
 <script type="module">
@@ -178,14 +213,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// 🔒 GİRİŞ YOKSA AT
+// 🔒 LOGIN YOKSA AT
 onAuthStateChanged(auth,(user)=>{
   if(!user){
     location.href="login.html";
   }
 });
 
-// 🚪 ÇIKIŞ
+// 🚪 LOGOUT
 window.logout = ()=>{
   signOut(auth);
   location.href="login.html";
