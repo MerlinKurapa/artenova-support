@@ -6,40 +6,85 @@
 
 <style>
 body {
-  font-family: Poppins, sans-serif;
-  background:#020617;
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg,#020617,#0f172a);
+  font-family:Poppins;
   color:white;
+}
+
+.card {
+  background: rgba(30,41,59,0.6);
+  backdrop-filter: blur(20px);
+  padding:40px;
+  border-radius:25px;
+  width:320px;
   text-align:center;
-  margin-top:100px;
+  border:1px solid rgba(59,130,246,0.4);
+  box-shadow:0 0 40px rgba(59,130,246,0.3);
 }
 
 input {
-  padding:10px;
-  margin:10px;
-  border-radius:10px;
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:15px;
   border:none;
-  width:250px;
+  background:#020617;
+  color:white;
+  outline:none;
+}
+
+input:focus {
+  box-shadow:0 0 15px #22c55e;
 }
 
 button {
-  padding:10px 20px;
+  width:100%;
+  padding:12px;
+  margin-top:15px;
   border:none;
-  border-radius:10px;
+  border-radius:15px;
   background:#22c55e;
   color:white;
   cursor:pointer;
+}
+
+button:hover {
+  transform:scale(1.05);
+  box-shadow:0 0 20px #22c55e;
+}
+
+.link {
+  margin-top:15px;
+  font-size:14px;
+  color:#94a3b8;
+}
+
+.link a {
+  color:#22c55e;
+  text-decoration:none;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Kayıt Ol</h2>
+<div class="card">
+  <h2>Kayıt Ol</h2>
 
-<input id="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Şifre"><br>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Şifre">
 
-<button onclick="register()">Kayıt Ol</button>
+  <button onclick="register()">Kayıt Ol</button>
+
+  <div class="link">
+    Hesabın var mı? <a href="login.html">Giriş Yap</a>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
@@ -49,33 +94,19 @@ const firebaseConfig = {
   apiKey: "AIzaSyBEgE2zQ9zz0Ie_yN39P2uJl8wrZZmymdU",
   authDomain: "ticker-489ad.firebaseapp.com",
   projectId: "ticker-489ad",
-  storageBucket: "ticker-489ad.firebasestorage.app",
-  messagingSenderId: "649615430475",
-  appId: "1:649615430475:web:0fc027484950c1090b8ece",
-  measurementId: "G-M82RWCCG71"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 window.register = async () => {
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  if(!email || !password){
-    alert("Alanlar boş olamaz!");
-    return;
-  }
-
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    await createUserWithEmailAndPassword(auth,email.value,password.value);
     alert("Kayıt başarılı!");
-    window.location.href = "login.html";
+    location.href="login.html";
   } catch(e){
     alert(e.message);
   }
-
 }
 </script>
 
