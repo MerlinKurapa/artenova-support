@@ -1,30 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Giriş</title>
+<title>Giriş Yap</title>
 
 <style>
 body {
+  font-family: Poppins, sans-serif;
   background:#020617;
   color:white;
   text-align:center;
-  font-family:Poppins;
+  margin-top:100px;
 }
 
 input {
-  padding:12px;
+  padding:10px;
   margin:10px;
   border-radius:10px;
   border:none;
+  width:250px;
 }
 
 button {
   padding:10px 20px;
-  background:#22c55e;
   border:none;
   border-radius:10px;
+  background:#3b82f6;
   color:white;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -36,9 +39,7 @@ button {
 <input id="email" placeholder="Email"><br>
 <input id="password" type="password" placeholder="Şifre"><br>
 
-<button onclick="login()">Giriş</button>
-
-<p>Hesabın yok mu? <a href="register.html">Kayıt ol</a></p>
+<button onclick="login()">Giriş Yap</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
@@ -58,12 +59,30 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 window.login = async () => {
+
   const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+  const password = document.getElementById("password").value;
 
-  await signInWithEmailAndPassword(auth, email, pass);
+  if(!email || !password){
+    alert("Alanlar boş olamaz!");
+    return;
+  }
 
-  window.location.href = "panel.html";
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("Giriş başarılı!");
+
+    // 🔥 admin mi kontrol et
+    if(email === "bulureren76@gmail.com"){
+      window.location.href = "admin.html";
+    } else {
+      window.location.href = "index.html";
+    }
+
+  } catch(e){
+    alert("Hatalı giriş!");
+  }
+
 }
 </script>
 
