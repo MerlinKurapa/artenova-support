@@ -11,72 +11,117 @@ body {
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #020617, #0f172a);
   color: white;
-  text-align: center;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
 }
 
-/* ÜST UYARI */
-.top-alert {
-  position: fixed;
-  top: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.6);
-  color: #f87171;
-  padding: 15px 25px;
-  border-radius: 14px;
-  font-size: 14px;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-  transition: 0.4s;
-  z-index: 999;
+/* CENTER */
+.wrapper{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-.top-alert.show {
-  top: 20px;
+/* CARD */
+.card{
+  background: rgba(30,41,59,0.6);
+  backdrop-filter: blur(12px);
+  padding:40px;
+  border-radius:25px;
+  box-shadow:0 0 30px rgba(59,130,246,0.2);
+  text-align:center;
+  width:400px;
+  transition:0.3s;
 }
 
-h2 {
-  margin-top: 80px;
-  font-size: 28px;
-  font-weight: 600;
+.card:hover{
+  box-shadow:0 0 40px rgba(59,130,246,0.6);
 }
 
-input, textarea {
-  width: 340px;
-  padding: 14px;
-  margin: 12px;
-  border-radius: 18px;
-  border: 1px solid rgba(59,130,246,0.3);
-  outline: none;
-  background: rgba(15, 23, 42, 0.6);
-  color: white;
+/* TITLE */
+h2{
+  margin-bottom:20px;
 }
 
-textarea {
-  min-height: 160px;
+/* INPUT */
+input, textarea{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  border-radius:18px;
+  border:1px solid rgba(59,130,246,0.3);
+  background: rgba(15,23,42,0.7);
+  color:white;
+  outline:none;
+  transition:0.3s;
 }
 
-.error {
-  border: 1px solid #ef4444 !important;
+input:focus, textarea:focus{
+  border:1px solid #3b82f6;
+  box-shadow:0 0 15px #3b82f6;
+  transform:scale(1.02);
 }
 
-button {
-  padding: 12px 30px;
-  border-radius: 12px;
-  background: #22c55e;
-  color: white;
-  cursor: pointer;
+textarea{
+  min-height:140px;
+  resize:none;
 }
 
-.warning {
-  margin-top: 20px;
-  color: #f87171;
+/* BUTTON */
+button{
+  margin-top:15px;
+  padding:12px 30px;
+  border:none;
+  border-radius:12px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+  font-size:15px;
 }
 
-.success {
-  margin-top: 20px;
-  color: #4ade80;
-  display: none;
+button:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 25px #22c55e;
+}
+
+/* WARNING CARD */
+.warning{
+  margin-top:20px;
+  background: rgba(239,68,68,0.15);
+  border:1px solid rgba(239,68,68,0.6);
+  padding:15px;
+  border-radius:15px;
+  color:#f87171;
+  box-shadow:0 0 20px rgba(239,68,68,0.4);
+}
+
+/* TOP ALERT */
+.top-alert{
+  position:fixed;
+  top:-80px;
+  left:50%;
+  transform:translateX(-50%);
+  background: rgba(239,68,68,0.2);
+  border:1px solid red;
+  padding:15px;
+  border-radius:12px;
+  transition:0.4s;
+}
+
+.top-alert.show{
+  top:20px;
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;
+  padding:15px;
+  color:#64748b;
+  border-top:1px solid rgba(255,255,255,0.1);
 }
 </style>
 
@@ -86,20 +131,28 @@ button {
 
 <div id="topAlert" class="top-alert"></div>
 
-<h2 id="title"></h2>
+<div class="wrapper">
 
-<input id="username" placeholder="Arte Kullanıcı Adın"><br>
-<input id="instagram" placeholder="Instagram Kullanıcı Adın"><br>
-<textarea id="message" placeholder="Sorununuzu İletin"></textarea><br>
+<div class="card">
+
+<h2 id="title">🎫 Ticket Oluştur</h2>
+
+<input id="username" placeholder="Arte Kullanıcı Adın">
+<input id="instagram" placeholder="Instagram Kullanıcı Adın">
+<textarea id="message" placeholder="Sorununuzu İletin"></textarea>
 
 <button onclick="send()">Gönder</button>
 
 <div class="warning">
-⚠️ Bilgileri doğru girmezsen geri dönüş alamazsın!
+⚠️ <b>Not:</b> Bilgileri doğru girmezsen geri dönüş alamazsın!
 </div>
 
-<div class="success" id="successMsg">
-✅ Gönderildi!
+</div>
+
+</div>
+
+<div class="footer">
+© 2026 ArteNova Destek Sistemi • Tüm hakları saklıdır
 </div>
 
 <script type="module">
@@ -117,72 +170,49 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let currentUser = null;
+let currentUser=null;
 
-// 🔒 GİRİŞ KONTROL
-onAuthStateChanged(auth, (user)=>{
+onAuthStateChanged(auth,(user)=>{
   if(!user){
     location.href="login.html";
   } else {
-    currentUser = user;
+    currentUser=user;
   }
 });
 
-const urlParams = new URLSearchParams(window.location.search);
-const type = urlParams.get("type");
+function showAlert(text){
+  const el=document.getElementById("topAlert");
+  el.innerText=text;
+  el.classList.add("show");
 
-document.getElementById("title").innerText =
-  type === "ticket" ? "🎫 Ticket Oluştur" :
-  type === "support" ? "🛠️ Destek Talebi" :
-  "💡 Öneri Gönder";
-
-function showAlert(text) {
-  const alertBox = document.getElementById("topAlert");
-  alertBox.innerText = text;
-  alertBox.classList.add("show");
-
-  setTimeout(() => {
-    alertBox.classList.remove("show");
-  }, 2500);
+  setTimeout(()=>el.classList.remove("show"),2000);
 }
 
-window.send = async () => {
+window.send = async ()=>{
 
-  const username = document.getElementById("username");
-  const instagram = document.getElementById("instagram");
-  const message = document.getElementById("message");
+  const username=document.getElementById("username");
+  const instagram=document.getElementById("instagram");
+  const message=document.getElementById("message");
 
-  username.classList.remove("error");
-  instagram.classList.remove("error");
-  message.classList.remove("error");
-
-  if (!username.value || !instagram.value || !message.value) {
-
-    if (!username.value) username.classList.add("error");
-    if (!instagram.value) instagram.classList.add("error");
-    if (!message.value) message.classList.add("error");
-
+  if(!username.value || !instagram.value || !message.value){
     showAlert("⚠️ Tüm alanları doldur!");
     return;
   }
 
-  await addDoc(collection(db, "tickets"), {
+  await addDoc(collection(db,"tickets"),{
     username: username.value,
     instagram: instagram.value,
     message: message.value,
-    userEmail: currentUser.email, // 🔥 EN ÖNEMLİ KISIM
-    type: type,
-    status: "open",
-    created: new Date()
+    userEmail: currentUser.email,
+    status:"open",
+    created:new Date()
   });
-
-  document.getElementById("successMsg").style.display = "block";
 
   showAlert("✅ Gönderildi!");
 
   setTimeout(()=>{
-    location.href="panel.html"; // 🔥 panel yönlendirme
-  },1500);
+    location.href="panel.html";
+  },1200);
 }
 </script>
 
