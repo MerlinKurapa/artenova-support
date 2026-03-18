@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg,#020617,#0f172a);
+  color:white;
+  padding:30px;
+}
+
+h2 {
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.ticket {
+  background:#1e293b;
+  padding:20px;
+  margin:15px auto;
+  border-radius:15px;
+  width:500px;
+  text-align:left;
+  box-shadow:0 0 20px rgba(59,130,246,0.2);
+}
+
+.ticket p {
+  margin:5px 0;
+}
+
+input {
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+  background:#020617;
+  color:white;
+}
+
+button {
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.replyBtn {
+  background:#3b82f6;
+  color:white;
+}
+
+.closeBtn {
+  background:#ef4444;
+  color:white;
+}
+</style>
+
+</head>
+
+<body>
+
+<h2>🛠️ Admin Panel</h2>
+
+<div id="tickets"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBEgE2zQ9zz0Ie_yN39P2uJl8wrZZmymdU",
+  authDomain: "ticker-489ad.firebaseapp.com",
+  projectId: "ticker-489ad",
+  storageBucket: "ticker-489ad.firebasestorage.app",
+  messagingSenderId: "649615430475",
+  appId: "1:649615430475:web:0fc027484950c1090b8ece",
+  measurementId: "G-M82RWCCG71"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// 🔒 ADMIN KONTROL + TICKETS
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user || user.email !== "bulureren76@gmail.com") {
+    alert("Yetkisiz giriş!");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const snap = await getDocs(collection(db,"tickets"));
+
+  document.getElementById("tickets").innerHTML = ""; // temizle
+
+  snap.forEach(d=>{
+    const data = d.data();
+
+    document.getElementById("tickets").innerHTML += `
+      <div class="ticket">
+        <p><b>Kullanıcı:</b> ${data.username}</p>
+        <p><b>Instagram:</b> ${data.instagram}</p>
+        <p><b>Mesaj:</b> ${data.message}</p>
+        <p><b>Durum:</b> ${data.status}</p>
+        <p><b>Cevap:</b> ${data.reply || "Yok"}</p>
+
+        <input id="r${d.id}" placeholder="Cevap yaz">
+
+        <button class="replyBtn" onclick="reply('${d.id}')">Cevapla</button>
+        <button class="closeBtn" onclick="closeTicket('${d.id}')">Kapat</button>
+      </div>
+    `;
+  });
+
+});
+
+// ✅ CEVAPLA
+window.reply = async (id)=>{
+  const val = document.getElementById("r"+id).value;
+
+  if(!val){
+    alert("Cevap boş olamaz!");
+    return;
+  }
+
+  await updateDoc(doc(db,"tickets",id),{
+    reply: val
+  });
+
+  alert("Cevap gönderildi");
+  location.reload();
+}
+
+// ❌ KAPAT
+window.closeTicket = async (id)=>{
+  await updateDoc(doc(db,"tickets",id),{
+    status: "closed"
+  });
+
+  alert("Ticket kapatıldı");
+  location.reload();
+}
+</script>
+
+</body>
+</html>
