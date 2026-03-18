@@ -18,6 +18,27 @@ body {
   min-height: 100vh;
 }
 
+/* 🔥 BİLDİRİM */
+.reply-alert {
+  position: fixed;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(34,197,94,0.15);
+  border: 1px solid rgba(34,197,94,0.6);
+  color: #4ade80;
+  padding: 14px 25px;
+  border-radius: 18px;
+  font-size: 14px;
+  box-shadow: 0 0 25px rgba(34,197,94,0.5);
+  transition: 0.4s;
+  z-index: 9999;
+}
+
+.reply-alert.show {
+  top: 30px;
+}
+
 /* HEADER */
 .title {
   margin-top: 50px;
@@ -105,7 +126,6 @@ body {
   overflow: hidden;
 }
 
-/* GLOW EFFECT */
 .card::before {
   content: "";
   position: absolute;
@@ -150,6 +170,11 @@ body {
 
 <body>
 
+<!-- 🔥 BİLDİRİM -->
+<div id="replyAlert" class="reply-alert">
+✅ Ticketiniz Yanıtlandı — Panelden Görüntüleyebilirsiniz
+</div>
+
 <div class="top-bar">
   <button class="top-btn panel" onclick="goPanel()">Panel</button>
   <button class="top-btn logout" onclick="logout()">Çıkış</button>
@@ -189,7 +214,6 @@ body {
 
   <!-- ORTA -->
   <div class="container">
-
     <div class="card" onclick="openForm('ticket')">
       🎫
       <h2>Ticket</h2>
@@ -207,10 +231,9 @@ body {
       <h2>Öneri</h2>
       <p>Fikirlerini paylaş</p>
     </div>
-
   </div>
 
-  <!-- SAĞ -->
+ <!-- SAĞ -->
   <div class="info-card">
     <h3>🎮 ARTE NEDİR?</h3>
 
@@ -240,6 +263,7 @@ body {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEgE2zQ9zz0Ie_yN39P2uJl8wrZZmymdU",
@@ -249,10 +273,38 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-onAuthStateChanged(auth,(user)=>{
+// 🔥 BİLDİRİM GÖSTER
+function showReplyAlert(){
+  const el = document.getElementById("replyAlert");
+  el.classList.add("show");
+
+  setTimeout(()=>{
+    el.classList.remove("show");
+  },4000);
+}
+
+onAuthStateChanged(auth, async(user)=>{
   if(!user){
     location.href="login.html";
+    return;
+  }
+
+  const snap = await getDocs(collection(db,"tickets"));
+
+  let hasReply = false;
+
+  snap.forEach(d=>{
+    const data = d.data();
+
+    if(data.userEmail === user.email && data.reply){
+      hasReply = true;
+    }
+  });
+
+  if(hasReply){
+    showReplyAlert();
   }
 });
 
