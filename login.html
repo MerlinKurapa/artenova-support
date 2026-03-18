@@ -114,8 +114,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 window.login = async () => {
-  const email = email.value;
-  const password = password.value;
+
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+
+  const email = emailInput.value;
+  const password = passwordInput.value;
+
+  if(!email || !password){
+    alert("Alanlar boş olamaz!");
+    return;
+  }
 
   try {
     await signInWithEmailAndPassword(auth,email,password);
@@ -126,9 +135,10 @@ window.login = async () => {
       location.href = "index.html";
     }
 
-  } catch {
+  } catch(e){
     alert("Hatalı giriş!");
   }
+
 }
 </script>
 
