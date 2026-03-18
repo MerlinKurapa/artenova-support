@@ -45,11 +45,17 @@ const auth = getAuth(app);
 
 onAuthStateChanged(auth, async (user)=>{
 
-  if(!user){
-    location.href="login.html";
+  if(user === null){
+    // sadece kesin null ise yönlendir
+    setTimeout(()=>{
+      if(!auth.currentUser){
+        location.href="login.html";
+      }
+    },500);
     return;
   }
 
+  // BURASI USER VAR DEMEK
   const snap = await getDocs(collection(db,"tickets"));
 
   snap.forEach(d=>{
